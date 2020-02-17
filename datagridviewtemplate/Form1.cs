@@ -24,6 +24,13 @@ namespace datagridviewtemplate
 
             populateEmployeesTable();
             populatePositionCombo();
+            setPositionOptions();
+        }
+        private void setPositionOptions() {
+            foreach (DataGridViewRow row in dataGridView1.Rows) {
+                DataGridViewComboBoxCell comboPosition = (DataGridViewComboBoxCell)row.Cells["CmbPosition"];
+                comboPosition.Value = 3;
+            }
         }
 
         private void populatePositionCombo() {
