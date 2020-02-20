@@ -13,23 +13,25 @@ namespace datagridviewtemplate
 {
     public partial class Form1 : Form
     {
-        SqlConnection myConnection;
-        DataTable dtBS;
+        SqlConnection con;
 
         public Form1()
         {
-            myConnection = new SqlConnection(@"server=DESKTOP-QPM5S0C\SQLEXPRESS;Trusted_Connection=yes;database=DGVDB;connection timeout=30");
+            con = new SqlConnection(@"server=DESKTOP-QPM5S0C\SQLEXPRESS;Trusted_Connection=yes;database=DGVDB;connection timeout=30");
 
             InitializeComponent();
 
-            populateEmployeesTable();
+            // populateEmployeesTable();
+            CalculateTotalPages();
             populatePositionCombo();
             setPositionOptions();
+
+            btnFirstPage.PerformClick();
         }
         private void setPositionOptions() {
             foreach (DataGridViewRow row in dataGridView1.Rows) {
                 DataGridViewComboBoxCell comboPosition = (DataGridViewComboBoxCell)row.Cells["CmbPosition"];
-                comboPosition.Value = 3;
+                comboPosition.Value = 1;
             }
         }
 
@@ -47,7 +49,7 @@ namespace datagridviewtemplate
                 comboColumn.DataSource = dt;
             }
         }
-        private void populateEmployeesTable() {
+        /*private void populateEmployeesTable() {
             if (getEmployees() != null) {
                 SqlDataAdapter da = new SqlDataAdapter();
                 da.SelectCommand = getEmployees();
@@ -55,149 +57,144 @@ namespace datagridviewtemplate
                 da.Fill(dtBS);
                 dataGridView1.DataSource = dtBS;
             }
-        }
+        }*/
+
         private SqlCommand getPositions()
         {
             try
             {
-                myConnection.Open();
+                con.Open();
                 string sql = @"SELECT [positionID],[positionName] FROM [dbo].[position]";
-                using (SqlCommand positions = new SqlCommand(sql, myConnection))
+                using (SqlCommand positions = new SqlCommand(sql, con))
                 {
-                    myConnection.Close();
+                    con.Close();
                     return positions;
                 }
             }
             catch (Exception ex)
             {
-                myConnection.Close();
+                con.Close();
                 MessageBox.Show(ex.Message);
                 return null;
+            }
+        }
+        private int getEmployeesCount() {
+            try
+            {
+                con.Open();
+                string sql = @"SELECT COUNT(*) FROM [dbo].[View_Employees]";
+                using (SqlCommand tblCount = new SqlCommand(sql, con))
+                {
+                    Int32 count = (Int32)tblCount.ExecuteScalar();
+                    con.Close();
+                    return count;
+                }
+            }
+            catch (Exception ex)
+            {
+                con.Close();
+                MessageBox.Show(ex.Message);
+                return 0;
             }
         }
 
         private SqlCommand getEmployees() {
             try {
-                myConnection.Open();
+                con.Open();
                 string sql = @"SELECT [EmployeeID],[FirstName],[LastName] FROM [dbo].[View_Employees]";
-                using (SqlCommand employees = new SqlCommand(sql, myConnection))
+                using (SqlCommand employees = new SqlCommand(sql, con))
                 {
-                    myConnection.Close();
+                    con.Close();
                     return employees;
                 }
             }
             catch (Exception ex) {
-                myConnection.Close();
+                con.Close();
                 MessageBox.Show(ex.Message);
                 return null;
             }
         }
-        private void openConnection(SqlConnection myConn) {
-            try
-            {
-                myConn.Open();
-                MessageBox.Show("sucessfully connected!");
-            }
-            catch (Exception ex) {
-                myConnection.Close();
-                MessageBox.Show(ex.Message);
-            }
+
+        private int PgSize = 10;
+        private int CurrentPageIndex = 1;
+        private int TotalPage = 0;
+
+        private void btnFirstPage_Click(object sender, EventArgs e)
+        {
+            CurrentPageIndex = 1;
+            dataGridView1.DataSource = GetCurrentRecords(CurrentPageIndex, con);
         }
 
-        private void dataGridView1_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
+        private void btnPreviousPage_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show(e.RowIndex.ToString());
-        }
-
-
-        /// <summary>
-        /// DATA GRID DRAG AND DROP FUNCTIONALITY
-        /// </summary>
-        private Rectangle dragBoxFromMouseDown;
-        private int rowIndexFromMouseDown;
-        private int rowIndexOfItemUnderMouseToDrop;
-        private void dataGridView1_MouseMove(object sender, MouseEventArgs e)
-        {
-            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+            if (CurrentPageIndex > 1)
             {
-                // If the mouse moves outside the rectangle, start the drag.
-                if (dragBoxFromMouseDown != Rectangle.Empty &&
-                    !dragBoxFromMouseDown.Contains(e.X, e.Y))
-                {
-
-                    // Proceed with the drag and drop, passing in the list item.                    
-                    DragDropEffects dropEffect = dataGridView1.DoDragDrop(
-                    dataGridView1.Rows[rowIndexFromMouseDown],
-                    DragDropEffects.Move);
-                }
+                CurrentPageIndex--;
+                dataGridView1.DataSource = GetCurrentRecords(CurrentPageIndex, con);
             }
         }
 
-        private void refreshDataGrid()
+        private void btnLastPage_Click(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = dtBS;
-            dataGridView1.Refresh();
+            CurrentPageIndex = TotalPage;
+            dataGridView1.DataSource = GetCurrentRecords(CurrentPageIndex, con);
         }
 
-        private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
+        private void btnNextPage_Click(object sender, EventArgs e)
         {
-            // Get the index of the item the mouse is below.
-            rowIndexFromMouseDown = dataGridView1.HitTest(e.X, e.Y).RowIndex;
-            if (rowIndexFromMouseDown != -1)
+            if (CurrentPageIndex < TotalPage)
             {
-                // Remember the point where the mouse down occurred. 
-                // The DragSize indicates the size that the mouse can move 
-                // before a drag event should be started.                
-                Size dragSize = SystemInformation.DragSize;
-
-                // Create a rectangle using the DragSize, with the mouse position being
-                // at the center of the rectangle.
-                dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2),
-                                                               e.Y - (dragSize.Height / 2)),
-                                    dragSize);
+                CurrentPageIndex++;
+                dataGridView1.DataSource = GetCurrentRecords(CurrentPageIndex, con);
+            }
+        }
+        private DataTable GetCurrentRecords(int page, SqlConnection con)
+        {
+            DataTable dt = new DataTable();
+            SqlCommand cmd2;
+            if (page == 1)
+            {
+                cmd2 = new SqlCommand("Select TOP " + PgSize +
+                " * from [dbo].[View_Employees] ORDER BY EmployeeID", con);
             }
             else
-                // Reset the rectangle if the mouse is not over an item in the ListBox.
-                dragBoxFromMouseDown = Rectangle.Empty;
-        }
-
-        private void dataGridView1_DragOver(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.Move;
-        }
-
-        private void dataGridView1_DragDrop(object sender, DragEventArgs e)
-        {
-            // The mouse locations are relative to the screen, so they must be 
-            // converted to client coordinates.
-            Point clientPoint = dataGridView1.PointToClient(new Point(e.X, e.Y));
-
-            // Get the row index of the item the mouse is below. 
-            rowIndexOfItemUnderMouseToDrop =
-                dataGridView1.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
-
-            // If the drag operation was a move then remove and insert the row.
-            if (e.Effect == DragDropEffects.Move)
             {
-                DataGridViewRow rowToMove = e.Data.GetData(
-                    typeof(DataGridViewRow)) as DataGridViewRow;
+                int PreviousPageOffSet = (page - 1) * PgSize;
 
-                DataRow oldRow = ((DataRowView)rowToMove.DataBoundItem).Row;
+                cmd2 = new SqlCommand("Select TOP " + PgSize +
+                    " * from [dbo].[View_Employees] WHERE EmployeeID NOT IN " +
+                    "(Select TOP " + PreviousPageOffSet +
+            " EmployeeID from [dbo].[View_Employees] ORDER BY EmployeeID) ", con);
+            }
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                da.SelectCommand = cmd2;
+                da.Fill(dt);
+            }
+            finally
+            {
+                con.Close();
+            }
+            return dt;
+        }
 
-                DataRow newRow = dtBS.NewRow();
-                newRow.ItemArray = oldRow.ItemArray;
-                
+        private void CalculateTotalPages()
+        {
+            if (getEmployees() != null)
+            {
+                /*SqlDataAdapter da = new SqlDataAdapter();
+                da.SelectCommand = getEmployees();
+                DataTable dt = new DataTable();
+                da.Fill(dt);*/
 
-                dtBS.Rows.Remove(oldRow);
-                dtBS.Rows.InsertAt(newRow, rowIndexOfItemUnderMouseToDrop);
-                //dtBS.Rows.RemoveAt(rowIndexFromMouseDown+1);
-
-                if (rowIndexOfItemUnderMouseToDrop < 0)
-                {
-                    return;
-                }
+                // int rowCount = dt.Rows.Count;
+                int rowCount = getEmployeesCount();
+                TotalPage = rowCount / PgSize;
+                // if any row left after calculated pages, add one more page 
+                if (rowCount % PgSize > 0)
+                    TotalPage += 1;
             }
         }
-
     }
 }

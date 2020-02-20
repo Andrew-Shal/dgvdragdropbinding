@@ -40,6 +40,11 @@
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.btnPreviousPage = new System.Windows.Forms.Button();
+            this.btnNextPage = new System.Windows.Forms.Button();
+            this.btnFirstPage = new System.Windows.Forms.Button();
+            this.btnLastPage = new System.Windows.Forms.Button();
+            this.lblCurrentPage = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -47,6 +52,8 @@
             // dataGridView1
             // 
             this.dataGridView1.AllowDrop = true;
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -57,13 +64,8 @@
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
             this.dataGridView1.Location = new System.Drawing.Point(12, 73);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(776, 365);
+            this.dataGridView1.Size = new System.Drawing.Size(776, 328);
             this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.CellContextMenuStripNeeded += new System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventHandler(this.dataGridView1_CellContextMenuStripNeeded);
-            this.dataGridView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.dataGridView1_DragDrop);
-            this.dataGridView1.DragOver += new System.Windows.Forms.DragEventHandler(this.dataGridView1_DragOver);
-            this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseDown);
-            this.dataGridView1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseMove);
             // 
             // TxtID
             // 
@@ -133,11 +135,65 @@
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
+            // btnPreviousPage
+            // 
+            this.btnPreviousPage.Location = new System.Drawing.Point(290, 407);
+            this.btnPreviousPage.Name = "btnPreviousPage";
+            this.btnPreviousPage.Size = new System.Drawing.Size(44, 23);
+            this.btnPreviousPage.TabIndex = 4;
+            this.btnPreviousPage.Text = "<";
+            this.btnPreviousPage.UseVisualStyleBackColor = true;
+            this.btnPreviousPage.Click += new System.EventHandler(this.btnPreviousPage_Click);
+            // 
+            // btnNextPage
+            // 
+            this.btnNextPage.Location = new System.Drawing.Point(402, 407);
+            this.btnNextPage.Name = "btnNextPage";
+            this.btnNextPage.Size = new System.Drawing.Size(44, 23);
+            this.btnNextPage.TabIndex = 5;
+            this.btnNextPage.Text = ">";
+            this.btnNextPage.UseVisualStyleBackColor = true;
+            this.btnNextPage.Click += new System.EventHandler(this.btnNextPage_Click);
+            // 
+            // btnFirstPage
+            // 
+            this.btnFirstPage.Location = new System.Drawing.Point(240, 407);
+            this.btnFirstPage.Name = "btnFirstPage";
+            this.btnFirstPage.Size = new System.Drawing.Size(44, 23);
+            this.btnFirstPage.TabIndex = 6;
+            this.btnFirstPage.Text = "<<";
+            this.btnFirstPage.UseVisualStyleBackColor = true;
+            this.btnFirstPage.Click += new System.EventHandler(this.btnFirstPage_Click);
+            // 
+            // btnLastPage
+            // 
+            this.btnLastPage.Location = new System.Drawing.Point(452, 407);
+            this.btnLastPage.Name = "btnLastPage";
+            this.btnLastPage.Size = new System.Drawing.Size(44, 23);
+            this.btnLastPage.TabIndex = 7;
+            this.btnLastPage.Text = ">>";
+            this.btnLastPage.UseVisualStyleBackColor = true;
+            this.btnLastPage.Click += new System.EventHandler(this.btnLastPage_Click);
+            // 
+            // lblCurrentPage
+            // 
+            this.lblCurrentPage.AutoSize = true;
+            this.lblCurrentPage.Location = new System.Drawing.Point(352, 412);
+            this.lblCurrentPage.Name = "lblCurrentPage";
+            this.lblCurrentPage.Size = new System.Drawing.Size(39, 13);
+            this.lblCurrentPage.TabIndex = 8;
+            this.lblCurrentPage.Text = "{page}";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lblCurrentPage);
+            this.Controls.Add(this.btnLastPage);
+            this.Controls.Add(this.btnFirstPage);
+            this.Controls.Add(this.btnNextPage);
+            this.Controls.Add(this.btnPreviousPage);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.dataGridView1);
@@ -146,6 +202,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -162,6 +219,11 @@
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnPreviousPage;
+        private System.Windows.Forms.Button btnNextPage;
+        private System.Windows.Forms.Button btnFirstPage;
+        private System.Windows.Forms.Button btnLastPage;
+        private System.Windows.Forms.Label lblCurrentPage;
     }
 }
 
