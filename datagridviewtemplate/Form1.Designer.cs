@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.TxtID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.TxtPositionReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TxtFirstName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TxtLastName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.CmbPosition = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -52,26 +53,38 @@
             // dataGridView1
             // 
             this.dataGridView1.AllowDrop = true;
-            this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TxtID,
+            this.TxtPositionReference,
             this.TxtFirstName,
             this.TxtLastName,
             this.CmbPosition});
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
             this.dataGridView1.Location = new System.Drawing.Point(12, 73);
+            this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(776, 328);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.REDFrmRecordManagementEntryDGVRecordEntry_DragDrop);
+            this.dataGridView1.DragOver += new System.Windows.Forms.DragEventHandler(this.REDFrmRecordManagementEntryDGVRecordEntry_DragOver);
+            this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.REDFrmRecordManagementEntryDGVRecordEntry_MouseDown);
+            this.dataGridView1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.REDFrmRecordManagementEntryDGVRecordEntry_MouseMove);
             // 
             // TxtID
             // 
             this.TxtID.DataPropertyName = "EmployeeID";
             this.TxtID.HeaderText = "EmployeeID";
             this.TxtID.Name = "TxtID";
+            // 
+            // TxtPositionReference
+            // 
+            this.TxtPositionReference.DataPropertyName = "PositionReference";
+            this.TxtPositionReference.HeaderText = "Position Reference";
+            this.TxtPositionReference.Name = "TxtPositionReference";
+            this.TxtPositionReference.ReadOnly = true;
             // 
             // TxtFirstName
             // 
@@ -125,6 +138,7 @@
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnCancel
             // 
@@ -137,7 +151,7 @@
             // 
             // btnPreviousPage
             // 
-            this.btnPreviousPage.Location = new System.Drawing.Point(290, 407);
+            this.btnPreviousPage.Location = new System.Drawing.Point(281, 407);
             this.btnPreviousPage.Name = "btnPreviousPage";
             this.btnPreviousPage.Size = new System.Drawing.Size(44, 23);
             this.btnPreviousPage.TabIndex = 4;
@@ -147,7 +161,7 @@
             // 
             // btnNextPage
             // 
-            this.btnNextPage.Location = new System.Drawing.Point(402, 407);
+            this.btnNextPage.Location = new System.Drawing.Point(408, 407);
             this.btnNextPage.Name = "btnNextPage";
             this.btnNextPage.Size = new System.Drawing.Size(44, 23);
             this.btnNextPage.TabIndex = 5;
@@ -157,7 +171,7 @@
             // 
             // btnFirstPage
             // 
-            this.btnFirstPage.Location = new System.Drawing.Point(240, 407);
+            this.btnFirstPage.Location = new System.Drawing.Point(231, 407);
             this.btnFirstPage.Name = "btnFirstPage";
             this.btnFirstPage.Size = new System.Drawing.Size(44, 23);
             this.btnFirstPage.TabIndex = 6;
@@ -167,7 +181,7 @@
             // 
             // btnLastPage
             // 
-            this.btnLastPage.Location = new System.Drawing.Point(452, 407);
+            this.btnLastPage.Location = new System.Drawing.Point(458, 407);
             this.btnLastPage.Name = "btnLastPage";
             this.btnLastPage.Size = new System.Drawing.Size(44, 23);
             this.btnLastPage.TabIndex = 7;
@@ -178,7 +192,7 @@
             // lblCurrentPage
             // 
             this.lblCurrentPage.AutoSize = true;
-            this.lblCurrentPage.Location = new System.Drawing.Point(352, 412);
+            this.lblCurrentPage.Location = new System.Drawing.Point(331, 412);
             this.lblCurrentPage.Name = "lblCurrentPage";
             this.lblCurrentPage.Size = new System.Drawing.Size(39, 13);
             this.lblCurrentPage.TabIndex = 8;
@@ -199,6 +213,7 @@
             this.Controls.Add(this.dataGridView1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -209,10 +224,6 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TxtID;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TxtFirstName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TxtLastName;
-        private System.Windows.Forms.DataGridViewComboBoxColumn CmbPosition;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem employeeDGVToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem moveDownToolStripMenuItem;
@@ -224,6 +235,11 @@
         private System.Windows.Forms.Button btnFirstPage;
         private System.Windows.Forms.Button btnLastPage;
         private System.Windows.Forms.Label lblCurrentPage;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TxtID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TxtPositionReference;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TxtFirstName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TxtLastName;
+        private System.Windows.Forms.DataGridViewComboBoxColumn CmbPosition;
     }
 }
 

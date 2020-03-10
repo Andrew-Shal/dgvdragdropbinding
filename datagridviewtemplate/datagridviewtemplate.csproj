@@ -46,6 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DBConnectors\DBConnector.cs" />
+    <Compile Include="DBConnectors\DGVDBConnector.cs" />
+    <Compile Include="DBConnectors\IDbConnector.cs" />
+    <Compile Include="Dependencies\Paginator.cs" />
     <Compile Include="DGV_Handler.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -53,8 +57,14 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Employee.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries.cs" />
+    <Compile Include="Repositories\EmployeeRepository.cs" />
+    <Compile Include="Repositories\IRepository.cs" />
+    <Compile Include="Repositories\Repository.cs" />
+    <Compile Include="Utility.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
